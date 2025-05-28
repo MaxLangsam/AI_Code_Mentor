@@ -1,10 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import ChatHeader from './ChatHeader';
 import ChatMessages from './ChatMessages';
 import ChatInput from './ChatInput';
 import FileUpload from './FileUpload';
+import CodePlayground from './CodePlayground';
 import { useMultiLanguageAI } from '../hooks/useMultiLanguageAI';
 import { ProgrammingLanguage } from '../types/languages';
 import { toast } from '@/hooks/use-toast';
@@ -26,6 +26,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ selectedLanguage }) => {
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [showFileUpload, setShowFileUpload] = useState(false);
+  const [showPlayground, setShowPlayground] = useState(false);
   const { preferences } = useUserPreferences();
   
   const { generateResponse, isLoading: modelLoading, isModelReady } = useMultiLanguageAI();
@@ -165,6 +166,18 @@ What ${selectedLanguage.name} challenge would you like to tackle today? Whether 
     });
   };
 
+  // If playground is open, show only the playground
+  if (showPlayground) {
+    return (
+      <div className="space-y-4">
+        <CodePlayground 
+          selectedLanguage={selectedLanguage} 
+          onClose={() => setShowPlayground(false)} 
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
       {/* File Upload Area */}
@@ -183,6 +196,7 @@ What ${selectedLanguage.name} challenge would you like to tackle today? Whether 
           onCopyConversation={copyConversation}
           onExportConversation={exportConversation}
           onLoadConversation={setMessages}
+          onTogglePlayground={() => setShowPlayground(true)}
         />
 
         <ChatMessages messages={messages} isTyping={isTyping} />

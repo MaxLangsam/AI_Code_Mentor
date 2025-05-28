@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Upload, Copy, Download } from 'lucide-react';
+import { Upload, Copy, Download, Code } from 'lucide-react';
 import ConversationHistory from './ConversationHistory';
 import SettingsModal from './SettingsModal';
 import { ProgrammingLanguage } from '../types/languages';
@@ -21,6 +21,7 @@ interface ChatHeaderProps {
   onCopyConversation: () => void;
   onExportConversation: () => void;
   onLoadConversation: (messages: Message[]) => void;
+  onTogglePlayground: () => void;
 }
 
 const ChatHeader: React.FC<ChatHeaderProps> = ({
@@ -31,6 +32,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
   onCopyConversation,
   onExportConversation,
   onLoadConversation,
+  onTogglePlayground,
 }) => {
   return (
     <div className={`bg-gradient-to-r ${selectedLanguage.color} p-4`}>
@@ -53,6 +55,15 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({
             title="Upload file for review"
           >
             <Upload className="w-4 h-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onTogglePlayground}
+            className="text-white hover:bg-white/20 p-2"
+            title="Open code playground"
+          >
+            <Code className="w-4 h-4" />
           </Button>
           <ConversationHistory
             currentMessages={messages}
