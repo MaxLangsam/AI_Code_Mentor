@@ -2,8 +2,9 @@
 import React from 'react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { ThumbsDown, User, Code, Sparkles, Copy } from 'lucide-react';
+import { ThumbsDown, User, Sparkles, Copy } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import EnhancedCodeBlock from './EnhancedCodeBlock';
 
 interface Message {
   id: string;
@@ -53,28 +54,19 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
         const code = lines.slice(1).join('\n');
         
         return (
-          <div key={index} className="my-4">
-            <div className="bg-gradient-to-r from-gray-900 to-gray-800 text-gray-100 p-5 rounded-xl font-mono text-sm overflow-x-auto shadow-lg border border-gray-700">
-              {language && (
-                <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-700">
-                  <div className="text-xs text-emerald-400 font-semibold uppercase tracking-wide">{language}</div>
-                  <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-red-400 rounded-full"></div>
-                    <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
-                    <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                  </div>
-                </div>
-              )}
-              <pre className="whitespace-pre-wrap text-gray-100">{code}</pre>
-            </div>
-          </div>
+          <EnhancedCodeBlock
+            key={index}
+            code={code}
+            language={language || 'text'}
+            showLineNumbers={true}
+          />
         );
       } else {
         // Regular text with markdown support
         const formattedText = part
-          .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-gray-900">$1</strong>')
+          .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-gray-900 dark:text-gray-100">$1</strong>')
           .replace(/\*(.*?)\*/g, '<em class="italic">$1</em>')
-          .replace(/`(.*?)`/g, '<code class="bg-gray-100 text-purple-600 px-1 py-0.5 rounded text-sm font-mono">$1</code>');
+          .replace(/`(.*?)`/g, '<code class="bg-gray-100 dark:bg-gray-800 text-purple-600 dark:text-purple-400 px-1 py-0.5 rounded text-sm font-mono">$1</code>');
         
         return (
           <span 
@@ -107,7 +99,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
             className={`px-5 py-4 rounded-2xl shadow-lg relative ${
               message.isUser
                 ? 'bg-gradient-to-br from-blue-500 to-purple-600 text-white rounded-br-md transform hover:scale-[1.02] transition-transform duration-200'
-                : 'bg-white text-gray-800 rounded-bl-md border border-gray-100 hover:shadow-xl transition-shadow duration-200'
+                : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 rounded-bl-md border border-gray-100 dark:border-gray-700 hover:shadow-xl transition-shadow duration-200'
             }`}
           >
             <div className="text-sm leading-relaxed">
@@ -121,7 +113,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
                   variant="ghost"
                   size="sm"
                   onClick={handleCopyResponse}
-                  className="h-8 w-8 p-0 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors duration-200"
+                  className="h-8 w-8 p-0 text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-gray-700 rounded-full transition-colors duration-200"
                   title="Copy response"
                 >
                   <Copy className="w-3.5 h-3.5" />
@@ -140,7 +132,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
                 variant="ghost"
                 size="sm"
                 onClick={handleFeedback}
-                className="h-7 w-7 p-0 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors duration-200"
+                className="h-7 w-7 p-0 text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-gray-700 rounded-full transition-colors duration-200"
               >
                 <ThumbsDown className="w-3.5 h-3.5" />
               </Button>
