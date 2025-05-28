@@ -2,7 +2,7 @@
 import React from 'react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { ThumbsDown, User, Code, Sparkles } from 'lucide-react';
+import { ThumbsDown, User, Code, Sparkles, Copy } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 interface Message {
@@ -20,8 +20,23 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
   const handleFeedback = () => {
     toast({
       title: "✨ Feedback Received",
-      description: "Thank you! Your feedback helps PyMentor provide better Python assistance.",
+      description: "Thank you! Your feedback helps CodeMentor provide better assistance.",
     });
+  };
+
+  const handleCopyResponse = async () => {
+    try {
+      await navigator.clipboard.writeText(message.content);
+      toast({
+        title: "📋 Copied!",
+        description: "Response copied to clipboard successfully.",
+      });
+    } catch (error) {
+      toast({
+        title: "❌ Copy Failed",
+        description: "Failed to copy response to clipboard.",
+      });
+    }
   };
 
   // Function to render code blocks and markdown
@@ -73,7 +88,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
   };
 
   return (
-    <div className={`flex ${message.isUser ? 'justify-end' : 'justify-start'} mb-6 animate-fade-in`}>
+    <div className={`flex ${message.isUser ? 'justify-end' : 'justify-start'} mb-6 animate-fade-in group`}>
       <div className={`flex max-w-[85%] ${message.isUser ? 'flex-row-reverse' : 'flex-row'} items-start`}>
         {/* Avatar */}
         <Avatar className="w-10 h-10 mx-3 shadow-md">
@@ -89,7 +104,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
         {/* Message content */}
         <div className="flex flex-col max-w-full">
           <div
-            className={`px-5 py-4 rounded-2xl shadow-lg ${
+            className={`px-5 py-4 rounded-2xl shadow-lg relative ${
               message.isUser
                 ? 'bg-gradient-to-br from-blue-500 to-purple-600 text-white rounded-br-md transform hover:scale-[1.02] transition-transform duration-200'
                 : 'bg-white text-gray-800 rounded-bl-md border border-gray-100 hover:shadow-xl transition-shadow duration-200'
@@ -98,6 +113,21 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
             <div className="text-sm leading-relaxed">
               {renderContent(message.content)}
             </div>
+            
+            {/* Copy button for AI responses */}
+            {!message.isUser && (
+              <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleCopyResponse}
+                  className="h-8 w-8 p-0 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors duration-200"
+                  title="Copy response"
+                >
+                  <Copy className="w-3.5 h-3.5" />
+                </Button>
+              </div>
+            )}
           </div>
           
           {/* Timestamp and feedback button */}
