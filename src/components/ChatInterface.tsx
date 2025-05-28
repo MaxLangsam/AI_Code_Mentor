@@ -1,9 +1,9 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
-import { Send, Sparkles } from 'lucide-react';
+import { Send, Sparkles, Copy, Download } from 'lucide-react';
 import MessageBubble from './MessageBubble';
 import { useMultiLanguageAI } from '../hooks/useMultiLanguageAI';
 import { ProgrammingLanguage } from '../types/languages';
@@ -112,6 +112,48 @@ What ${selectedLanguage.name} challenge would you like to tackle today? Whether 
     }
   };
 
+  const copyConversation = async () => {
+    const conversationText = messages
+      .filter(msg => msg.id !== 'welcome')
+      .map(msg => `${msg.isUser ? 'You' : 'CodeMentor'}: ${msg.content}`)
+      .join('\n\n');
+
+    try {
+      await navigator.clipboard.writeText(conversationText);
+      toast({
+        title: "📋 Copied!",
+        description: "Conversation copied to clipboard successfully.",
+      });
+    } catch (error) {
+      toast({
+        title: "❌ Copy Failed",
+        description: "Failed to copy conversation to clipboard.",
+      });
+    }
+  };
+
+  const exportConversation = () => {
+    const conversationText = messages
+      .filter(msg => msg.id !== 'welcome')
+      .map(msg => `${msg.isUser ? 'You' : 'CodeMentor'} (${msg.timestamp.toLocaleString()}): ${msg.content}`)
+      .join('\n\n');
+
+    const blob = new Blob([conversationText], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `codementor-conversation-${selectedLanguage.name.toLowerCase()}-${new Date().toISOString().split('T')[0]}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    toast({
+      title: "💾 Exported!",
+      description: "Conversation exported successfully.",
+    });
+  };
+
   return (
     <Card className="max-w-5xl mx-auto h-[650px] flex flex-col bg-white/95 backdrop-blur-lg shadow-2xl border-0 ring-1 ring-white/20 rounded-3xl overflow-hidden">
       {/* Header */}
@@ -127,8 +169,30 @@ What ${selectedLanguage.name} challenge would you like to tackle today? Whether 
             </div>
           </div>
           <div className="flex items-center space-x-2">
-            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-            <span className="text-sm font-medium">Online</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={copyConversation}
+              className="text-white hover:bg-white/20 p-2"
+              disabled={messages.length <= 1}
+              title="Copy conversation"
+            >
+              <Copy className="w-4 h-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={exportConversation}
+              className="text-white hover:bg-white/20 p-2"
+              disabled={messages.length <= 1}
+              title="Export conversation"
+            >
+              <Download className="w-4 h-4" />
+            </Button>
+            <div className="flex items-center space-x-2 ml-4">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              <span className="text-sm font-medium">Online</span>
+            </div>
           </div>
         </div>
       </div>
@@ -156,22 +220,23 @@ What ${selectedLanguage.name} challenge would you like to tackle today? Whether 
       <div className="border-t border-gray-200/50 p-6 bg-white/80 backdrop-blur-sm">
         <div className="flex space-x-4">
           <div className="flex-1 relative">
-            <Input
+            <Textarea
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder={`Ask me anything about ${selectedLanguage.name} - code, debugging, concepts...`}
-              className="pr-12 border-2 border-gray-200 focus:border-blue-400 focus:ring-blue-400/20 bg-white rounded-2xl text-base py-3 px-4 shadow-sm"
+              onKeyDown={handleKeyPress}
+              placeholder={`Ask me anything about ${selectedLanguage.name} - code, debugging, concepts... (Shift+Enter for new line)`}
+              className="resize-none border-2 border-gray-200 focus:border-blue-400 focus:ring-blue-400/20 bg-white rounded-2xl text-base py-3 px-4 shadow-sm min-h-[50px] max-h-[120px]"
               disabled={isTyping}
+              rows={1}
             />
-            <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-              <span className="text-gray-400">⌘↵</span>
+            <div className="absolute right-3 top-3">
+              <span className="text-gray-400 text-xs">⌘↵ Send • ⇧↵ New line</span>
             </div>
           </div>
           <Button 
             onClick={handleSendMessage} 
             disabled={!inputValue.trim() || isTyping}
-            className={`px-6 py-3 bg-gradient-to-r ${selectedLanguage.color} hover:opacity-90 text-white shadow-lg rounded-2xl transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:transform-none`}
+            className={`px-6 py-3 bg-gradient-to-r ${selectedLanguage.color} hover:opacity-90 text-white shadow-lg rounded-2xl transform hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:transform-none self-end`}
           >
             <Send className="w-5 h-5" />
           </Button>
