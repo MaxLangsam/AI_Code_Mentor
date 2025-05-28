@@ -29,15 +29,17 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ selectedLanguage }) => {
   const [isTyping, setIsTyping] = useState(false);
   const [showFileUpload, setShowFileUpload] = useState(false);
   const [currentView, setCurrentView] = useState<'chat' | 'playground'>('chat');
+  const [hasInitialized, setHasInitialized] = useState(false);
   const { preferences } = useUserPreferences();
   
   const { generateResponse, isLoading: modelLoading, isModelReady } = useMultiLanguageAI();
 
-  // Update welcome message when language changes
+  // Initialize with welcome message only once, or when explicitly resetting
   useEffect(() => {
-    const welcomeMessage: Message = {
-      id: 'welcome',
-      content: `👋 Hello! I'm **CodeMentor**, your AI programming companion specialized in **${selectedLanguage.name}**.
+    if (!hasInitialized) {
+      const welcomeMessage: Message = {
+        id: 'welcome',
+        content: `👋 Hello! I'm **CodeMentor**, your AI programming companion specialized in **${selectedLanguage.name}**.
 
 I'm here to help you excel at ${selectedLanguage.name} programming with:
 
@@ -57,20 +59,24 @@ ${selectedLanguage.icon} **Clean, well-structured code writing**
 🔀 **Independent code playground** - switch languages freely in playground mode!
 
 What ${selectedLanguage.name} challenge would you like to tackle today? Whether you're a beginner or an expert, I'm ready to help! ✨`,
-      isUser: false,
-      timestamp: new Date()
-    };
+        isUser: false,
+        timestamp: new Date()
+      };
 
-    setMessages([welcomeMessage]);
-  }, [selectedLanguage]);
+      setMessages([welcomeMessage]);
+      setHasInitialized(true);
+    }
+  }, [selectedLanguage, hasInitialized]);
 
-  // Show ready toast when language changes
+  // Show ready toast when language changes (but don't reset messages)
   useEffect(() => {
-    toast({
-      title: `${selectedLanguage.icon} CodeMentor Enhanced!`,
-      description: `Your ${selectedLanguage.name} programming companion is ready with new features!`,
-    });
-  }, [selectedLanguage]);
+    if (hasInitialized) {
+      toast({
+        title: `${selectedLanguage.icon} Language Switched!`,
+        description: `Now optimized for ${selectedLanguage.name} programming. Your chat history is preserved!`,
+      });
+    }
+  }, [selectedLanguage, hasInitialized]);
 
   const handleSendMessage = async () => {
     if (!inputValue.trim() || isTyping) return;
