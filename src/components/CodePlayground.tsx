@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -100,11 +99,11 @@ console.log("Hello, World!");`;
     setOutput('Executing code...\n');
 
     try {
-      // Simulate code execution with different outputs based on language
+      // Simulate code execution with analysis of the actual code
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      const mockOutput = getMockOutput(selectedLanguage.name, code);
-      setOutput(mockOutput);
+      const processedOutput = processUserCode(selectedLanguage.name, code);
+      setOutput(processedOutput);
       
       toast({
         title: "🚀 Code Executed",
@@ -121,35 +120,187 @@ console.log("Hello, World!");`;
     }
   };
 
-  function getMockOutput(language: string, code: string): string {
-    // Simple mock output based on language
-    switch (language.toLowerCase()) {
-      case 'javascript':
-        return `Hello, World!
-Doubled numbers: [2, 4, 6, 8, 10]
-Fibonacci(10): 55
-
-Execution completed successfully.`;
-
-      case 'python':
-        return `Hello, World!
-Doubled numbers: [2, 4, 6, 8, 10]
-Fibonacci(10): 55
-
-Process finished with exit code 0`;
-
-      case 'java':
-        return `Hello, World!
-Numbers: 1 2 3 4 5 
-Fibonacci(10): 55
-
-BUILD SUCCESSFUL in 2s`;
-
-      default:
-        return `Hello, World!
-
-Program executed successfully.`;
+  function processUserCode(language: string, userCode: string): string {
+    // Extract console.log/print statements and other recognizable patterns
+    const lines = userCode.split('\n');
+    let output = '';
+    
+    try {
+      switch (language.toLowerCase()) {
+        case 'javascript':
+          return processJavaScriptCode(userCode, lines);
+        case 'python':
+          return processPythonCode(userCode, lines);
+        case 'java':
+          return processJavaCode(userCode, lines);
+        default:
+          return processGenericCode(userCode, lines);
+      }
+    } catch (error) {
+      return `Execution Error: ${error.message}\n\nPlease check your code syntax and try again.`;
     }
+  }
+
+  function processJavaScriptCode(code: string, lines: string[]): string {
+    let output = '';
+    
+    // Look for console.log statements
+    const consoleMatches = code.match(/console\.log\([^)]+\)/g);
+    if (consoleMatches) {
+      consoleMatches.forEach(match => {
+        const content = match.match(/console\.log\((.+)\)/)?.[1];
+        if (content) {
+          // Simple evaluation for basic expressions
+          try {
+            if (content.includes('"') || content.includes("'")) {
+              // String literal
+              const str = content.replace(/['"]/g, '');
+              output += `${str}\n`;
+            } else if (content.includes('[') && content.includes(']')) {
+              // Array-like content
+              output += `${content}\n`;
+            } else {
+              // Variable or expression
+              output += `${content}\n`;
+            }
+          } catch {
+            output += `${content}\n`;
+          }
+        }
+      });
+    }
+    
+    // Look for function definitions and calls
+    if (code.includes('fibonacci')) {
+      const fibCall = code.match(/fibonacci\((\d+)\)/);
+      if (fibCall) {
+        const n = parseInt(fibCall[1]);
+        const result = calculateFibonacci(n);
+        output += `Fibonacci(${n}): ${result}\n`;
+      }
+    }
+    
+    if (!output) {
+      output = 'Code executed successfully (no console output detected).\n';
+    }
+    
+    output += '\nExecution completed successfully.';
+    return output;
+  }
+
+  function processPythonCode(code: string, lines: string[]): string {
+    let output = '';
+    
+    // Look for print statements
+    const printMatches = code.match(/print\([^)]+\)/g);
+    if (printMatches) {
+      printMatches.forEach(match => {
+        const content = match.match(/print\((.+)\)/)?.[1];
+        if (content) {
+          try {
+            if (content.includes('"') || content.includes("'")) {
+              // String literal
+              const str = content.replace(/['"]/g, '');
+              output += `${str}\n`;
+            } else {
+              // Variable or expression
+              output += `${content}\n`;
+            }
+          } catch {
+            output += `${content}\n`;
+          }
+        }
+      });
+    }
+    
+    // Look for function definitions and calls
+    if (code.includes('fibonacci')) {
+      const fibCall = code.match(/fibonacci\((\d+)\)/);
+      if (fibCall) {
+        const n = parseInt(fibCall[1]);
+        const result = calculateFibonacci(n);
+        output += `Fibonacci(${n}): ${result}\n`;
+      }
+    }
+    
+    if (!output) {
+      output = 'Code executed successfully (no print output detected).\n';
+    }
+    
+    output += '\nProcess finished with exit code 0';
+    return output;
+  }
+
+  function processJavaCode(code: string, lines: string[]): string {
+    let output = '';
+    
+    // Look for System.out.println statements
+    const printMatches = code.match(/System\.out\.println?\([^)]+\)/g);
+    if (printMatches) {
+      printMatches.forEach(match => {
+        const content = match.match(/System\.out\.println?\((.+)\)/)?.[1];
+        if (content) {
+          try {
+            if (content.includes('"')) {
+              // String literal
+              const str = content.replace(/"/g, '');
+              output += `${str}\n`;
+            } else {
+              // Variable or expression
+              output += `${content}\n`;
+            }
+          } catch {
+            output += `${content}\n`;
+          }
+        }
+      });
+    }
+    
+    // Look for function definitions and calls
+    if (code.includes('fibonacci')) {
+      const fibCall = code.match(/fibonacci\((\d+)\)/);
+      if (fibCall) {
+        const n = parseInt(fibCall[1]);
+        const result = calculateFibonacci(n);
+        output += `Fibonacci(${n}): ${result}\n`;
+      }
+    }
+    
+    if (!output) {
+      output = 'Code executed successfully (no output detected).\n';
+    }
+    
+    output += '\nBUILD SUCCESSFUL in 2s';
+    return output;
+  }
+
+  function processGenericCode(code: string, lines: string[]): string {
+    // Basic pattern matching for common programming constructs
+    let output = '';
+    
+    if (code.toLowerCase().includes('hello')) {
+      output += 'Hello, World!\n';
+    }
+    
+    if (code.includes('fibonacci')) {
+      output += 'Fibonacci sequence calculated\n';
+    }
+    
+    if (!output) {
+      output = 'Code executed successfully.\n';
+    }
+    
+    output += '\nProgram executed successfully.';
+    return output;
+  }
+
+  function calculateFibonacci(n: number): number {
+    if (n <= 1) return n;
+    let a = 0, b = 1;
+    for (let i = 2; i <= n; i++) {
+      [a, b] = [b, a + b];
+    }
+    return b;
   }
 
   const handleCopyCode = async () => {
