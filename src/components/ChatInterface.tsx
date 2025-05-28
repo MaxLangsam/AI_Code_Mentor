@@ -1,5 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { MessageSquare, Code } from 'lucide-react';
 import ChatHeader from './ChatHeader';
 import ChatMessages from './ChatMessages';
 import ChatInput from './ChatInput';
@@ -26,7 +29,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ selectedLanguage }) => {
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [showFileUpload, setShowFileUpload] = useState(false);
-  const [showPlayground, setShowPlayground] = useState(false);
+  const [currentView, setCurrentView] = useState<'chat' | 'playground'>('chat');
   const { preferences } = useUserPreferences();
   
   const { generateResponse, isLoading: modelLoading, isModelReady } = useMultiLanguageAI();
@@ -52,6 +55,7 @@ ${selectedLanguage.icon} **Clean, well-structured code writing**
 💾 **Conversation history** to save and reload sessions
 ⚙️ **Customizable settings** for themes, fonts, and preferences
 🔄 **Code execution** for JavaScript and Python (enable in settings)
+🔀 **Switch between chat and playground** - your conversations are always saved!
 
 What ${selectedLanguage.name} challenge would you like to tackle today? Whether you're a beginner or an expert, I'm ready to help! ✨`,
       isUser: false,
@@ -166,50 +170,78 @@ What ${selectedLanguage.name} challenge would you like to tackle today? Whether 
     });
   };
 
-  // If playground is open, show only the playground
-  if (showPlayground) {
-    return (
-      <div className="space-y-4">
-        <CodePlayground 
-          selectedLanguage={selectedLanguage} 
-          onClose={() => setShowPlayground(false)} 
-        />
-      </div>
-    );
-  }
+  const handleViewSwitch = (view: 'chat' | 'playground') => {
+    setCurrentView(view);
+    toast({
+      title: view === 'chat' ? "💬 Chat Mode" : "⚡ Playground Mode",
+      description: `Switched to ${view} - your conversations are preserved!`,
+    });
+  };
 
   return (
     <div className="space-y-4">
       {/* File Upload Area */}
-      {showFileUpload && (
+      {showFileUpload && currentView === 'chat' && (
         <Card className="p-4">
           <FileUpload onFileContent={handleFileContent} />
         </Card>
       )}
 
-      <Card className="max-w-5xl mx-auto h-[650px] flex flex-col bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg shadow-2xl border-0 ring-1 ring-white/20 dark:ring-gray-700/20 rounded-3xl overflow-hidden">
-        <ChatHeader
-          selectedLanguage={selectedLanguage}
-          messages={messages}
-          showFileUpload={showFileUpload}
-          onToggleFileUpload={() => setShowFileUpload(!showFileUpload)}
-          onCopyConversation={copyConversation}
-          onExportConversation={exportConversation}
-          onLoadConversation={setMessages}
-          onTogglePlayground={() => setShowPlayground(true)}
-        />
+      {/* View Toggle */}
+      <div className="flex justify-center mb-4">
+        <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full p-1 border shadow-lg">
+          <Button
+            variant={currentView === 'chat' ? 'default' : 'ghost'}
+            size="sm"
+            onClick={() => handleViewSwitch('chat')}
+            className="rounded-full px-6 py-2 flex items-center space-x-2"
+          >
+            <MessageSquare className="w-4 h-4" />
+            <span>Chat</span>
+          </Button>
+          <Button
+            variant={currentView === 'playground' ? 'default' : 'ghost'}
+            size="sm"
+            onClick={() => handleViewSwitch('playground')}
+            className="rounded-full px-6 py-2 flex items-center space-x-2"
+          >
+            <Code className="w-4 h-4" />
+            <span>Playground</span>
+          </Button>
+        </div>
+      </div>
 
-        <ChatMessages messages={messages} isTyping={isTyping} />
+      {/* Content based on current view */}
+      {currentView === 'chat' ? (
+        <Card className="max-w-5xl mx-auto h-[650px] flex flex-col bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg shadow-2xl border-0 ring-1 ring-white/20 dark:ring-gray-700/20 rounded-3xl overflow-hidden">
+          <ChatHeader
+            selectedLanguage={selectedLanguage}
+            messages={messages}
+            showFileUpload={showFileUpload}
+            onToggleFileUpload={() => setShowFileUpload(!showFileUpload)}
+            onCopyConversation={copyConversation}
+            onExportConversation={exportConversation}
+            onLoadConversation={setMessages}
+            onTogglePlayground={() => handleViewSwitch('playground')}
+          />
 
-        <ChatInput
-          inputValue={inputValue}
-          isTyping={isTyping}
-          selectedLanguage={selectedLanguage}
-          onInputChange={setInputValue}
-          onSendMessage={handleSendMessage}
-          onKeyPress={handleKeyPress}
+          <ChatMessages messages={messages} isTyping={isTyping} />
+
+          <ChatInput
+            inputValue={inputValue}
+            isTyping={isTyping}
+            selectedLanguage={selectedLanguage}
+            onInputChange={setInputValue}
+            onSendMessage={handleSendMessage}
+            onKeyPress={handleKeyPress}
+          />
+        </Card>
+      ) : (
+        <CodePlayground 
+          selectedLanguage={selectedLanguage} 
+          onClose={() => handleViewSwitch('chat')} 
         />
-      </Card>
+      )}
     </div>
   );
 };
