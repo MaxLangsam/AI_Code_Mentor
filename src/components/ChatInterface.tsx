@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -55,7 +54,7 @@ ${selectedLanguage.icon} **Clean, well-structured code writing**
 💾 **Conversation history** to save and reload sessions
 ⚙️ **Customizable settings** for themes, fonts, and preferences
 🔄 **Code execution** for JavaScript and Python (enable in settings)
-🔀 **Switch between chat and playground** - your conversations are always saved!
+🔀 **Independent code playground** - switch languages freely in playground mode!
 
 What ${selectedLanguage.name} challenge would you like to tackle today? Whether you're a beginner or an expert, I'm ready to help! ✨`,
       isUser: false,
@@ -174,7 +173,9 @@ What ${selectedLanguage.name} challenge would you like to tackle today? Whether 
     setCurrentView(view);
     toast({
       title: view === 'chat' ? "💬 Chat Mode" : "⚡ Playground Mode",
-      description: `Switched to ${view} - your conversations are preserved!`,
+      description: view === 'chat' 
+        ? "Switched to chat - your conversations are preserved!" 
+        : "Switched to playground - select any language independently!",
     });
   };
 
@@ -238,7 +239,7 @@ What ${selectedLanguage.name} challenge would you like to tackle today? Whether 
         </Card>
       ) : (
         <CodePlayground 
-          selectedLanguage={selectedLanguage} 
+          initialLanguage={selectedLanguage}
           onClose={() => handleViewSwitch('chat')} 
         />
       )}

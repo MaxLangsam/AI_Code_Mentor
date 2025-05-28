@@ -2,18 +2,22 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import { Play, Copy, Download, RotateCcw, X } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Play, Copy, Download, RotateCcw, X, Code2 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useUserPreferences } from '../contexts/UserPreferencesContext';
-import { ProgrammingLanguage } from '../types/languages';
+import { ProgrammingLanguage, PROGRAMMING_LANGUAGES } from '../types/languages';
 
 interface CodePlaygroundProps {
-  selectedLanguage: ProgrammingLanguage;
   onClose: () => void;
+  initialLanguage?: ProgrammingLanguage;
 }
 
-const CodePlayground: React.FC<CodePlaygroundProps> = ({ selectedLanguage, onClose }) => {
+const CodePlayground: React.FC<CodePlaygroundProps> = ({ onClose, initialLanguage }) => {
   const { preferences } = useUserPreferences();
+  const [selectedLanguage, setSelectedLanguage] = useState<ProgrammingLanguage>(
+    initialLanguage || PROGRAMMING_LANGUAGES[0]
+  );
   const [code, setCode] = useState(getDefaultCode(selectedLanguage.name));
   const [output, setOutput] = useState('');
   const [isExecuting, setIsExecuting] = useState(false);
@@ -85,6 +89,19 @@ public class Main {
 console.log("Hello, World!");`;
     }
   }
+
+  const handleLanguageChange = (languageName: string) => {
+    const newLanguage = PROGRAMMING_LANGUAGES.find(lang => lang.name === languageName);
+    if (newLanguage) {
+      setSelectedLanguage(newLanguage);
+      setCode(getDefaultCode(newLanguage.name));
+      setOutput('');
+      toast({
+        title: `🔄 Language Changed`,
+        description: `Switched to ${newLanguage.name}. Code template updated.`,
+      });
+    }
+  };
 
   const handleExecuteCode = async () => {
     if (!preferences.enableCodeExecution) {
@@ -372,50 +389,72 @@ console.log("Hello, World!");`;
         <div className="flex items-center justify-between text-white">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-              <span className="text-lg">{selectedLanguage.icon}</span>
+              <Code2 className="w-5 h-5" />
             </div>
             <div>
               <h2 className="font-bold text-lg">Code Playground</h2>
-              <p className="text-sm text-white/80">{selectedLanguage.name} Interactive Environment</p>
+              <p className="text-sm text-white/80">Interactive Multi-Language Environment</p>
             </div>
           </div>
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleCopyCode}
-              className="text-white hover:bg-white/20 p-2"
-              title="Copy code"
-            >
-              <Copy className="w-4 h-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleDownloadCode}
-              className="text-white hover:bg-white/20 p-2"
-              title="Download code"
-            >
-              <Download className="w-4 h-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleResetCode}
-              className="text-white hover:bg-white/20 p-2"
-              title="Reset to default"
-            >
-              <RotateCcw className="w-4 h-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onClose}
-              className="text-white hover:bg-white/20 p-2"
-              title="Close playground"
-            >
-              <X className="w-4 h-4" />
-            </Button>
+          <div className="flex items-center space-x-3">
+            {/* Language Selector */}
+            <Select value={selectedLanguage.name} onValueChange={handleLanguageChange}>
+              <SelectTrigger className="w-40 bg-white/20 border-white/30 text-white focus:ring-white/50">
+                <div className="flex items-center space-x-2">
+                  <span>{selectedLanguage.icon}</span>
+                  <SelectValue />
+                </div>
+              </SelectTrigger>
+              <SelectContent>
+                {PROGRAMMING_LANGUAGES.map((lang) => (
+                  <SelectItem key={lang.name} value={lang.name}>
+                    <div className="flex items-center space-x-2">
+                      <span>{lang.icon}</span>
+                      <span>{lang.name}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleCopyCode}
+                className="text-white hover:bg-white/20 p-2"
+                title="Copy code"
+              >
+                <Copy className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleDownloadCode}
+                className="text-white hover:bg-white/20 p-2"
+                title="Download code"
+              >
+                <Download className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleResetCode}
+                className="text-white hover:bg-white/20 p-2"
+                title="Reset to default"
+              >
+                <RotateCcw className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onClose}
+                className="text-white hover:bg-white/20 p-2"
+                title="Close playground"
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
         </div>
       </div>
