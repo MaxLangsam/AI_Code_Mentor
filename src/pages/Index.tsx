@@ -16,7 +16,7 @@ const Index = () => {
             Aria AI
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Your intelligent companion for thoughtful conversations, creative collaboration, and insightful assistance
+            Your intelligent companion powered by OpenAI GPT-3.5 for thoughtful conversations, creative collaboration, and insightful assistance
           </p>
           <div className="flex items-center justify-center mt-4 space-x-4 text-sm text-gray-500">
             <span className="flex items-center">
@@ -24,7 +24,7 @@ const Index = () => {
               Online
             </span>
             <span>•</span>
-            <span>Powered by advanced AI</span>
+            <span>Powered by OpenAI</span>
           </div>
         </div>
         <ChatInterface />
