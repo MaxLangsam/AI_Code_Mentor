@@ -1,8 +1,14 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import ChatInterface from '../components/ChatInterface';
+import LanguageSelector from '../components/LanguageSelector';
+import { PROGRAMMING_LANGUAGES, ProgrammingLanguage } from '../types/languages';
 
 const Index = () => {
+  const [selectedLanguage, setSelectedLanguage] = useState<ProgrammingLanguage>(
+    PROGRAMMING_LANGUAGES[0] // Default to Python
+  );
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-blue-50 to-purple-100 relative overflow-hidden">
       {/* Background decorative elements */}
@@ -15,8 +21,8 @@ const Index = () => {
         <div className="text-center mb-8 animate-fade-in">
           <div className="flex items-center justify-center mb-6">
             <div className="relative">
-              <div className="w-20 h-20 bg-gradient-to-br from-emerald-500 via-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-300">
-                <span className="text-3xl font-bold text-white">🐍</span>
+              <div className={`w-20 h-20 bg-gradient-to-br ${selectedLanguage.color} rounded-2xl flex items-center justify-center shadow-2xl transform rotate-3 hover:rotate-0 transition-all duration-300`}>
+                <span className="text-3xl font-bold text-white">{selectedLanguage.icon}</span>
               </div>
               <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-400 rounded-full flex items-center justify-center">
                 <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
@@ -25,18 +31,18 @@ const Index = () => {
           </div>
           
           <h1 className="text-6xl font-extrabold bg-gradient-to-r from-emerald-600 via-blue-600 to-purple-600 bg-clip-text text-transparent mb-4 tracking-tight">
-            PyMentor
+            CodeMentor
           </h1>
           
           <div className="inline-block px-4 py-2 bg-gradient-to-r from-emerald-100 to-blue-100 rounded-full mb-4">
             <p className="text-lg font-semibold text-gray-700">
-              Your AI Python Programming Companion
+              Your AI Multi-Language Programming Companion
             </p>
           </div>
           
           <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed mb-6">
-            Master Python programming with an expert AI mentor. Get personalized help with code writing, 
-            debugging, optimization, and learning Python concepts following industry best practices.
+            Master multiple programming languages with an expert AI mentor. Get personalized help with code writing, 
+            debugging, optimization, and learning concepts across Python, JavaScript, TypeScript, Java, C++, and Rust.
           </p>
           
           <div className="flex items-center justify-center flex-wrap gap-6 text-sm">
@@ -46,7 +52,7 @@ const Index = () => {
             </div>
             <div className="flex items-center bg-white/70 backdrop-blur-sm px-4 py-2 rounded-full shadow-md">
               <div className="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
-              <span className="font-medium text-gray-700">PEP8 Compliant</span>
+              <span className="font-medium text-gray-700">Multi-Language</span>
             </div>
             <div className="flex items-center bg-white/70 backdrop-blur-sm px-4 py-2 rounded-full shadow-md">
               <div className="w-3 h-3 bg-purple-500 rounded-full mr-2"></div>
@@ -55,7 +61,12 @@ const Index = () => {
           </div>
         </div>
         
-        <ChatInterface />
+        <LanguageSelector 
+          selectedLanguage={selectedLanguage}
+          onLanguageSelect={setSelectedLanguage}
+        />
+        
+        <ChatInterface selectedLanguage={selectedLanguage} />
       </div>
     </div>
   );
