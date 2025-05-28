@@ -1,10 +1,9 @@
-
 import React, { useState } from 'react';
 import ChatInterface from '../components/ChatInterface';
 import LanguageSelector from '../components/LanguageSelector';
 import { PROGRAMMING_LANGUAGES, ProgrammingLanguage } from '../types/languages';
 import { useTheme } from '../contexts/ThemeContext';
-import { Sparkles, Zap, Upload, History } from 'lucide-react';
+import { Sparkles, Zap, Upload, History, Code2 } from 'lucide-react';
 
 const Index = () => {
   const [selectedLanguage, setSelectedLanguage] = useState<ProgrammingLanguage>(
