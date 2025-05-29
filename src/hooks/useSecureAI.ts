@@ -15,7 +15,7 @@ export const useSecureAI = () => {
     setIsLoading(true);
     
     try {
-      console.log(`Generating secure AI response...`);
+      console.log(`🔒 Generating secure AI response for ${selectedLanguage?.name || 'general'} programming...`);
       
       const { data, error } = await supabase.functions.invoke('chat-ai', {
         body: {
@@ -26,7 +26,7 @@ export const useSecureAI = () => {
       });
 
       if (error) {
-        console.error('Supabase function error:', error);
+        console.error('❌ Supabase function error:', error);
         throw error;
       }
 
@@ -34,11 +34,11 @@ export const useSecureAI = () => {
         throw new Error('No response received from AI service');
       }
 
-      console.log('Secure AI response generated successfully');
+      console.log('✅ Secure AI response generated successfully');
       return data.response;
 
     } catch (error) {
-      console.error('Error generating secure response:', error);
+      console.error('❌ Error generating secure response:', error);
       
       // Provide user-friendly error messages
       if (error.message?.includes('OpenAI API key')) {
@@ -52,7 +52,7 @@ export const useSecureAI = () => {
   }, []);
 
   const initializeModel = useCallback(async () => {
-    console.log('Secure AI service is ready to use');
+    console.log('🔒 Secure AI service is ready to use');
   }, []);
 
   return {
