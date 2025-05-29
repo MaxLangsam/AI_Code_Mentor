@@ -1,73 +1,104 @@
-# Welcome to your Lovable project
 
-## Project info
+# Codementor AI Project
 
 **URL**: https://lovable.dev/projects/1f409916-a93b-4fbf-9ab7-c5e1fb83fdb6
+## Overview
 
-## How can I edit this code?
+This project leverages [Lovable.dev](https://lovable.dev), an AI-powered full-stack development platform, to rapidly prototype and deploy web applications. By utilizing natural language prompts, Lovable.dev enables the creation of responsive front-end applications integrated with backend services like Supabase.([redsider.com][1], [Banani][2])
 
-There are several ways of editing your application.
+## Features
 
-**Use Lovable**
+* **AI-Driven Development**: Generate web applications using natural language descriptions (power by openai).
+* **Frontend**: Built with [Vite](https://vitejs.dev/) for fast and efficient development.
+* **Styling**: Utilizes [Tailwind CSS](https://tailwindcss.com/) for utility-first styling.
+* **Backend Integration**: Integrated with [Supabase](https://supabase.com/) for backend services, including authentication and database management.
+* **TypeScript Support**: Ensures type safety and improved developer experience.
+* **GitHub Integration**: Seamlessly sync your projects with GitHub for version control.([Banani][2], [redsider.com][1])
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/1f409916-a93b-4fbf-9ab7-c5e1fb83fdb6) and start prompting.
+## Getting Started
 
-Changes made via Lovable will be committed automatically to this repo.
+### Prerequisites
 
-**Use your preferred IDE**
+* [Node.js](https://nodejs.org/) installed on your machine.
+* [Bun](https://bun.sh/) as the package manager.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Installation
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+1. **Clone the repository**:
 
-Follow these steps:
+   ```bash
+   git clone https://github.com/MaxLangsam/AI_Code_Mentor.git
+   cd AI_Code_Mentor
+   ```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
 
-# Step 3: Install the necessary dependencies.
-npm i
+2. **Install dependencies**:
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+   ```bash
+   bun install
+   ```
+
+
+
+3. **Configure environment variables**:
+
+   Create a `.env` file in the root directory and add your Supabase credentials:
+
+   ```env
+   VITE_SUPABASE_URL=your-supabase-url
+   VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
+   ```
+
+
+
+4. **Start the development server**:
+
+   ```bash
+   bun run dev
+   ```
+
+
+
+The application will be available at `http://localhost:3000`.
+
+## Project Structure
+
+```plaintext
+codementor/
+├── public/                 # Static assets
+├── src/                    # Source code
+│   ├── components/         # Reusable components
+│   ├── pages/              # Application pages
+│   ├── styles/             # Tailwind CSS configurations
+│   └── main.ts             # Entry point
+├── supabase/               # Supabase configuration
+├── .gitignore              # Git ignore file
+├── bun.lockb               # Bun lock file
+├── package.json            # Project metadata and scripts
+├── tailwind.config.ts      # Tailwind CSS configuration
+├── tsconfig.json           # TypeScript configuration
+└── vite.config.ts          # Vite configuration
 ```
 
-**Edit a file directly in GitHub**
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
 
-**Use GitHub Codespaces**
+## Deployment
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+To deploy the application, you can use platforms like [Vercel](https://vercel.com/) or [Netlify](https://www.netlify.com/). Ensure that your environment variables are correctly set in the deployment platform's settings.
 
-## What technologies are used for this project?
+## Contributing
 
-This project is built with:
+Contributions are welcome! Please fork the repository and submit a pull request for any enhancements or bug fixes.([Lovable][3])
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## License
 
-## How can I deploy this project?
+This project is licensed under the [MIT License](LICENSE).
 
-Simply open [Lovable](https://lovable.dev/projects/1f409916-a93b-4fbf-9ab7-c5e1fb83fdb6) and click on Share -> Publish.
+---
 
-## Can I connect a custom domain to my Lovable project?
+Feel free to customize this `README.md` further to align with your project's specifics and goals. If you have any additional information or features you'd like to highlight, let me know, and I can assist in refining this document.
 
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+[1]: https://www.redsider.com/lovable-dev-ai-the-ai-powered-full-stack-development-platform/?utm_source=chatgpt.com "Lovable.dev AI: The AI-Powered Full-Stack Development Platform"
+[2]: https://www.banani.co/blog/lovable-dev-ai-pricing-and-alternatives?utm_source=chatgpt.com "Lovable.dev AI: Features, Pricing, And Alternatives"
+[3]: https://lovable.dev/?utm_source=chatgpt.com "Lovable.dev"
