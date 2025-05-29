@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { ProgrammingLanguage } from '../types/languages';
-import { useMultiLanguageAI } from './useMultiLanguageAI';
+import { useSecureAI } from './useSecureAI';
 import { useUserPreferences } from '../contexts/UserPreferencesContext';
 import { toast } from '@/hooks/use-toast';
 
@@ -18,7 +18,7 @@ export const useMessageManagement = (selectedLanguage: ProgrammingLanguage) => {
   const [isTyping, setIsTyping] = useState(false);
   const [hasInitialized, setHasInitialized] = useState(false);
   const { preferences } = useUserPreferences();
-  const { generateResponse } = useMultiLanguageAI();
+  const { generateResponse } = useSecureAI();
 
   // Initialize with welcome message only once
   useEffect(() => {
@@ -43,6 +43,7 @@ ${selectedLanguage.icon} **Clean, well-structured code writing**
 ⚙️ **Customizable settings** for themes, fonts, and preferences
 🔄 **Code execution** for JavaScript and Python (enable in settings)
 🔀 **Independent code playground** - switch languages freely in playground mode!
+🔒 **Secure AI processing** - all requests are now handled securely through encrypted channels
 
 What ${selectedLanguage.name} challenge would you like to tackle today? Whether you're a beginner or an expert, I'm ready to help! ✨`,
         isUser: false,
@@ -80,9 +81,8 @@ What ${selectedLanguage.name} challenge would you like to tackle today? Whether 
     setIsTyping(true);
 
     try {
-      // Generate AI response using the selected language and preferences
-      const enhancedPrompt = `${inputValue}\n\nResponse preferences: ${preferences.responseLength} length, ${preferences.codeTheme} code style.`;
-      const aiResponse = await generateResponse(enhancedPrompt, selectedLanguage);
+      // Generate AI response using the secure service
+      const aiResponse = await generateResponse(inputValue, selectedLanguage, preferences);
       
       const assistantResponse: Message = {
         id: (Date.now() + 1).toString(),
