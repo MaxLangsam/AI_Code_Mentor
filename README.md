@@ -1,7 +1,7 @@
 
 # Codementor AI Project
 
-**URL**: https://lovable.dev/projects/1f409916-a93b-4fbf-9ab7-c5e1fb83fdb6
+**URL**: https://codementor.lovable.app/
 ## Overview
 
 This project leverages [Lovable.dev](https://lovable.dev), an AI-powered full-stack development platform, to rapidly prototype and deploy web applications. By utilizing natural language prompts, Lovable.dev enables the creation of responsive front-end applications integrated with backend services like Supabase.([redsider.com][1], [Banani][2])
