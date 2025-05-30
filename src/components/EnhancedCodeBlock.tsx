@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Copy, Play, Download } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { useUserPreferences } from '../contexts/UserPreferencesContext';
+import { useIsMobile } from '../hooks/use-mobile';
 
 interface EnhancedCodeBlockProps {
   code: string;
@@ -18,6 +19,7 @@ const EnhancedCodeBlock: React.FC<EnhancedCodeBlockProps> = ({
 }) => {
   const { preferences } = useUserPreferences();
   const [isExecuting, setIsExecuting] = useState(false);
+  const isMobile = useIsMobile();
 
   const handleCopyCode = async () => {
     try {
@@ -90,7 +92,15 @@ const EnhancedCodeBlock: React.FC<EnhancedCodeBlockProps> = ({
   };
 
   const getFontSizeClass = () => {
-    switch (preferences.fontSize) {
+    const baseSize = preferences.fontSize;
+    if (isMobile) {
+      switch (baseSize) {
+        case 'small': return 'text-xs';
+        case 'large': return 'text-sm';
+        default: return 'text-xs';
+      }
+    }
+    switch (baseSize) {
       case 'small': return 'text-xs';
       case 'large': return 'text-base';
       default: return 'text-sm';
@@ -98,30 +108,33 @@ const EnhancedCodeBlock: React.FC<EnhancedCodeBlockProps> = ({
   };
 
   const lines = code.split('\n');
+  const shouldShowLineNumbers = showLineNumbers && preferences.showLineNumbers && !isMobile;
 
   return (
-    <div className="my-4">
-      <div className={`${getThemeClasses()} p-5 rounded-xl font-mono ${getFontSizeClass()} overflow-x-auto shadow-lg border border-gray-700`}>
+    <div className="my-3 sm:my-4">
+      <div className={`${getThemeClasses()} ${isMobile ? 'p-3' : 'p-5'} ${isMobile ? 'rounded-lg' : 'rounded-xl'} font-mono ${getFontSizeClass()} overflow-x-auto shadow-lg border border-gray-700`}>
         {/* Header */}
-        <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-700">
-          <div className="text-xs text-emerald-400 font-semibold uppercase tracking-wide">{language}</div>
+        <div className={`flex items-center justify-between ${isMobile ? 'mb-2 pb-2' : 'mb-3 pb-2'} border-b border-gray-700`}>
+          <div className={`${isMobile ? 'text-xs' : 'text-xs'} text-emerald-400 font-semibold uppercase tracking-wide`}>{language}</div>
           <div className="flex items-center space-x-2">
-            <div className="flex space-x-1">
-              <div className="w-2 h-2 bg-red-400 rounded-full"></div>
-              <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
-              <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-            </div>
-            <div className="flex space-x-1 ml-3">
+            {!isMobile && (
+              <div className="flex space-x-1">
+                <div className="w-2 h-2 bg-red-400 rounded-full"></div>
+                <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+              </div>
+            )}
+            <div className={`flex ${isMobile ? 'space-x-1' : 'space-x-1'} ${isMobile ? '' : 'ml-3'}`}>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleCopyCode}
-                className="h-6 w-6 p-0 text-gray-400 hover:text-blue-400"
+                className={`${isMobile ? 'h-5 w-5 p-0' : 'h-6 w-6 p-0'} text-gray-400 hover:text-blue-400`}
                 title="Copy code"
               >
-                <Copy className="w-3 h-3" />
+                <Copy className={`${isMobile ? 'w-2.5 h-2.5' : 'w-3 h-3'}`} />
               </Button>
-              {language === 'javascript' || language === 'python' ? (
+              {(language === 'javascript' || language === 'python') && !isMobile ? (
                 <Button
                   variant="ghost"
                   size="sm"
@@ -133,22 +146,24 @@ const EnhancedCodeBlock: React.FC<EnhancedCodeBlockProps> = ({
                   <Play className="w-3 h-3" />
                 </Button>
               ) : null}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleDownloadCode}
-                className="h-6 w-6 p-0 text-gray-400 hover:text-purple-400"
-                title="Download code"
-              >
-                <Download className="w-3 h-3" />
-              </Button>
+              {!isMobile && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleDownloadCode}
+                  className="h-6 w-6 p-0 text-gray-400 hover:text-purple-400"
+                  title="Download code"
+                >
+                  <Download className="w-3 h-3" />
+                </Button>
+              )}
             </div>
           </div>
         </div>
 
         {/* Code content */}
         <div className="relative">
-          {showLineNumbers && preferences.showLineNumbers ? (
+          {shouldShowLineNumbers ? (
             <div className="flex">
               <div className="select-none text-gray-500 text-right pr-4 min-w-[3rem]">
                 {lines.map((_, index) => (
@@ -160,7 +175,7 @@ const EnhancedCodeBlock: React.FC<EnhancedCodeBlockProps> = ({
               <pre className="whitespace-pre-wrap text-gray-100 flex-1 leading-6">{code}</pre>
             </div>
           ) : (
-            <pre className="whitespace-pre-wrap text-gray-100 leading-6">{code}</pre>
+            <pre className={`whitespace-pre-wrap text-gray-100 ${isMobile ? 'leading-5' : 'leading-6'}`}>{code}</pre>
           )}
         </div>
       </div>

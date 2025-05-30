@@ -9,6 +9,7 @@ import CodePlayground from './CodePlayground';
 import ChatViewToggle from './ChatViewToggle';
 import { useMessageManagement } from '../hooks/useMessageManagement';
 import { useChatUtilities } from './ChatUtilities';
+import { useIsMobile } from '../hooks/use-mobile';
 import { ProgrammingLanguage } from '../types/languages';
 
 interface Message {
@@ -25,6 +26,7 @@ interface ChatInterfaceProps {
 const ChatInterface: React.FC<ChatInterfaceProps> = ({ selectedLanguage }) => {
   const [showFileUpload, setShowFileUpload] = useState(false);
   const [currentView, setCurrentView] = useState<'chat' | 'playground'>('chat');
+  const isMobile = useIsMobile();
 
   const {
     messages,
@@ -48,7 +50,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ selectedLanguage }) => {
   });
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 px-2 sm:px-0">
       {/* File Upload Area */}
       {showFileUpload && currentView === 'chat' && (
         <Card className="p-4">
@@ -64,7 +66,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ selectedLanguage }) => {
 
       {/* Content based on current view */}
       {currentView === 'chat' ? (
-        <Card className="max-w-5xl mx-auto h-[650px] flex flex-col bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg shadow-2xl border-0 ring-1 ring-white/20 dark:ring-gray-700/20 rounded-3xl overflow-hidden">
+        <Card className={`${isMobile ? 'mx-0 h-[calc(100vh-200px)]' : 'max-w-5xl mx-auto h-[650px]'} flex flex-col bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg shadow-2xl border-0 ring-1 ring-white/20 dark:ring-gray-700/20 ${isMobile ? 'rounded-2xl' : 'rounded-3xl'} overflow-hidden`}>
           <ChatHeader
             selectedLanguage={selectedLanguage}
             messages={messages}
